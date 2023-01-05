@@ -15,7 +15,7 @@ fi
 echo "1. Install Docker and docker-compose"
 echo "2. Install Firewalld"
 echo "3. Exit script"
-read -p -r "Enter your script selection (1-2): " selection
+read -p "Enter your script selection (1-2): " selection
 if [[ $selection == "1" ]]; then
 	echo "[INFO]: Preparing to install Docker! ..."
     sleep 1
@@ -53,7 +53,7 @@ if [[ $selection == "2" ]]; then
     if [ "$(firewall-cmd --state)" == "running" ]; then
         echo "[INFO]: Install complete!"
         sleep 1
-        read -p -r "Do you want to allow HTTP, HTTPS and SSH (N/Y): " firewalld_y_n
+        read -p "Do you want to allow HTTP, HTTPS and SSH (N/Y): " firewalld_y_n
         lowerStr=$(echo "$firewalld_y_n" | tr '[:upper:]' '[:lower:]')
         if [[ $lowerStr == "y" ]]; then
             echo "[INFO]: Adding ruled to firewall..."
