@@ -1,1 +1,1 @@
-# debian-scripts
+# Debian bash scripts
