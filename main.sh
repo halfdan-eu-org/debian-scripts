@@ -12,9 +12,10 @@ if [[ "$EUID" -ne 0 ]]; then
 	exit
 fi
 
-echo "[INFO]: 1. Install Docker and docker-compose"
-echo "[INFO]: 2. Install Firewalld"
-read -p "Enter your script selection (1-2): " selection
+echo "1. Install Docker and docker-compose"
+echo "2. Install Firewalld"
+echo "3. Exit script"
+read -p -r "Enter your script selection (1-2): " selection
 if [[ $selection == "1" ]]; then
 	echo "[INFO]: Preparing to install Docker! ..."
     sleep 1
@@ -32,11 +33,11 @@ if [[ $selection == "1" ]]; then
     echo "[INFO]: Checking docker-compose version..."
     sleep 1
     docker compose version
-    echo "[INFO]: Install complete! Press enter to exit."
-    read
+    echo "[INFO]: Install complete! Exiting..."
     exit
+fi
     ### End Docker install
-elif [[ $selection == "2" ]]; then
+if [[ $selection == "2" ]]; then
     echo "[INFO]: Preparing to install Firewalld"
     sleep 1
     echo "[INFO]: Updating apt package repository..."
@@ -49,26 +50,31 @@ elif [[ $selection == "2" ]]; then
     sleep 1
     systemctl enable firewalld
     systemctl start firewalld
-    if [ $(firewall-cmd --state) == "running" ]; then
+    if [ "$(firewall-cmd --state)" == "running" ]; then
         echo "[INFO]: Install complete!"
         sleep 1
-        read -p "Do you want to allow HTTP, HTTPS and SSH (N/Y): " firewalld_y_n
-        if [[ $firewalld_y_n == "y" ]]; then
+        read -p -r "Do you want to allow HTTP, HTTPS and SSH (N/Y): " firewalld_y_n
+        lowerStr=$(echo "$firewalld_y_n" | tr '[:upper:]' '[:lower:]')
+        if [[ $lowerStr == "y" ]]; then
             echo "[INFO]: Adding ruled to firewall..."
             sleep 1
             firewall-cmd --add-port=80/tcp --permanent
             firewall-cmd --add-port=443/tcp --permanent
             firewall-cmd --add-port=22/tcp --permanent
-            echo "[INFO]: Done adding firewall rules! Press enter to exit..."
-            read
+            echo "[INFO]: Done adding firewall rules! Exiting..."
             exit
         fi
     else
-        echo "[Error]: Error could not install firewalld! Please check error!"
-    fi
-    exit
+        echo "[ERROR]: Error could not install firewalld! Please check error!"
+        exit
+fi
     ### End Firewalld install
+if [[ $selection == "3" ]]; then
+    echo "[INFO]: Good bye..."
+    exit
+fi
+
 else
-	echo "[WARNING]: The option: "$selection" is not valid. Exiting..."
+	echo "[WARNING]: The option: $selection is not valid. Exiting..."
     exit
 fi
